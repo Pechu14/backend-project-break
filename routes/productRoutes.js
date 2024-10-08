@@ -1,25 +1,16 @@
-const express = require('express')
-const router = express.Router()
-const ProductController =  require('../controllers/productController')
+const express = require('express');
+const router = express.Router();
+const ProductController = require('../controllers/productController');
+const multer = require('multer');
 
-// Middleware para analizar el cuerpo de las solicitudes JSON
-router.use(express.json());
+// Usa multer para manejar las subidas de archivos
+const upload = multer({ dest: 'public/images' });
 
-// Middleware para analizar los datos de formularios (application/x-www-form-urlencoded)
-router.use(express.urlencoded({ extended: true }));
+// Ruta para mostrar el formulario
+router.get('/dashboard/new', ProductController.getCreateProductFormView);
+
+// Ruta para manejar la creación del producto (usa multer para manejar la subida de archivos)
+router.post('/dashboard', upload.single('imagen'), ProductController.create);
 
 
-//router.post('/dashboard', ProductController.create)
-
-router.get('/dashboard/form', ProductController.getCreateProductFormView)
-
-router.post('/dashboard', (req, res) => {
-    const { nombre, descripcion, categoria, talla, precio } = req.body;
-  
-    // Llama al controlador de productos para crear un nuevo producto
-    ProductController.create(req, res);
-  });
-
-  /////////////////////////cambiar el create////////////////////////////////////////
-
-module.exports = router
+module.exports = router;

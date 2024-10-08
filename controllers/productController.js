@@ -1,24 +1,21 @@
-const Product = require('../models/Product');
+const multer = require('multer');
+const path = require('path');
+const Product = require('../models/Product'); // Asegúrate de que el modelo está importado
 
+// Configuración de multer para el manejo de archivos (imágenes)
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/images'); // Carpeta donde se guardarán las imágenes
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Nombre único para cada imagen
+  }
+});
+const upload = multer({ storage });
 
 const ProductController = {
-  //para crear el producto con get
-  create: async (req, res) => {
-      
-      try {
-          const bodyProduct = req.body
-          const product = await Product.create(bodyProduct) 
-          res.status(201).json(product)
-      } catch (error) {
-          res
-          .status(500)
-          .json({message:'There was a problem trying to create a post',error:error.message})
-      }
-  },
-
-  //para traer el formulario,recoger los datos y crear el producto
-  getCreateProductFormView:  async (req, res) => {
-      
+  // Para traer el formulario, recoger los datos y crear el producto
+  getCreateProductFormView: async (req, res) => {
     const htmlForm = `
       <!DOCTYPE html>
       <html lang="es">
@@ -90,20 +87,25 @@ const ProductController = {
               const imagen = imagenInput.files[0]; // Solo se permite seleccionar un archivo
 
               // Crear el objeto del producto
-              const formData = new FormData(); // Usamos FormData para manejar los datos, incluidas las imágenes
-              formData.append('nombre', nombre);
-              formData.append('descripcion', descripcion);
-              formData.append('categoria', categoria);
-              formData.append('talla', talla);
-              formData.append('precio', precio);
+              const data = {
+                nombre: nuevonombre,
+                descripcion: nuevadescripcion,
+                categoria: nuevacategoria,
+                talla: nuevatalla,
+                precio: +nuevoprecio
+              }
+                
               if (imagen) {
-                formData.append('imagen', imagen); // Adjuntar la imagen solo si se ha seleccionado
+                //formData.append('imagen', imagen); // Adjuntar la imagen solo si se ha seleccionado
               }
 
               // Hacer la petición HTTP con fetch
               fetch('/dashboard', {
                 method: 'POST',
-                body: formData, // Enviamos el FormData que contiene los datos y la imagen
+                headers: {
+                  'Content-Type': 'application/json', // Tipo de contenido enviado
+                },
+                body: JSON.stringify(data), // Enviamos el FormData que contiene los datos y la imagen
               })
               .then(response => {
                 if (!response.ok) {
@@ -125,17 +127,43 @@ const ProductController = {
       </body>
       </html>
     `;
-
     
     res.send(htmlForm);
+  },
 
-   
+  // Para crear el producto con POST
+  create: async (req, res) => {
+    try {
+      const { nombre, descripcion, categoria, talla, precio } = req.body;
+      let imagen = null;
 
-},
-}
+      if (req.file) {
+        imagen = req.file.filename; // El nombre del archivo de imagen subido
+      }
 
+      const product = await Product.create({
+        nombre,
+        descripcion,
+        categoria,
+        talla,
+        precio,
+        imagen
+      });
 
-
-
+      res.status(201).json(product);
+    } catch (error) {
+      res
+        .status(500)
+        .json({
+          message: 'There was a problem trying to create a product',
+          error: error.message
+        });
+    }
+  }
+};
 
 module.exports = ProductController;
+
+
+
+
