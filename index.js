@@ -1,7 +1,5 @@
 
 const express = require("express");
-const mongoose = require('mongoose');
-const path = require('path');
 const dotenv = require('dotenv');
 const router = require('./routes/productRoutes')
 
@@ -17,7 +15,7 @@ app.use(express.static('/public/images'));///comprobar que la ruta esta correcta
 
 
 dbConnection()
-app.use('/',router)
+app.use('/', router)
 
 
 app.listen(PORT, () => {
