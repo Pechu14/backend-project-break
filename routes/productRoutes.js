@@ -3,6 +3,8 @@ const router = express.Router()
 const ProductController =  require('../controllers/productController')
 
 
-router.post('/create', ProductController.create)
+router.post('/dashboard', ProductController.create)
+
+router.get('/dashboard/new', ProductController.getCreateProductFormView)
 
 module.exports = router
