@@ -27,7 +27,8 @@ const productSchema = new mongoose.Schema({
         required: true,
         enum: ["XS", "S", "M", "L", "XL"],
     },
-    precio: { type: Number, required: true, set: value => parseFloat(value.toFixed(2)) }
+    precio: { type: Number, required: true } //TODO: set: value => parseFloat(value.toFixed(2)) }
+    //he tenido que quitar el tofixed porque daba error
 }, {
     timestamps: true
 });

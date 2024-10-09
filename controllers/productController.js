@@ -350,8 +350,96 @@ showDashboard: async (req, res) => {
       res.status(500).send('Error al cargar el dashboard');
   }
 
+},
+
+     // Mostrar el formulario de edición
+  showEditProduct: async (req, res) => {
+    try {
+      const productId = req.params.productId;
+      const product = await Product.findById(productId);
+
+      if (!product) {
+        return res.status(404).send('Producto no encontrado');
+      }
+
+      const htmlForm = `
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Editar Producto</title>
+      </head>
+      <body>
+          <form action="/dashboard/${product._id}?_method=PUT" method="POST">
+            <!-- Nombre del Producto -->
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" value="${product.nombre}" maxlength="100" required>
+            <br><br>
+
+            <!-- Descripción del Producto -->
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" maxlength="300" required>${product.descripcion}</textarea>
+            <br><br>
+
+            <!-- Categoría del Producto -->
+            <label for="categoria">Categoría:</label>
+            <select id="categoria" name="categoria" required>
+              <option value="Camisetas" ${product.categoria === "Camisetas" ? "selected" : ""}>Camisetas</option>
+              <option value="Pantalones" ${product.categoria === "Pantalones" ? "selected" : ""}>Pantalones</option>
+              <option value="Zapatos" ${product.categoria === "Zapatos" ? "selected" : ""}>Zapatos</option>
+              <option value="Accesorios" ${product.categoria === "Accesorios" ? "selected" : ""}>Accesorios</option>
+            </select>
+            <br><br>
+
+            <!-- Talla del Producto -->
+            <label for="talla">Talla:</label>
+            <select id="talla" name="talla" required>
+              <option value="XS" ${product.talla === "XS" ? "selected" : ""}>XS</option>
+              <option value="S" ${product.talla === "S" ? "selected" : ""}>S</option>
+              <option value="M" ${product.talla === "M" ? "selected" : ""}>M</option>
+              <option value="L" ${product.talla === "L" ? "selected" : ""}>L</option>
+              <option value="XL" ${product.talla === "XL" ? "selected" : ""}>XL</option>
+            </select>
+            <br><br>
+
+            <!-- Precio del Producto -->
+            <label for="precio">Precio:</label>
+            <input type="number" id="precio" name="precio" value="${product.precio}" step="0.01" min="0" required>
+            <br><br>
+
+            <!-- Botón de enviar -->
+            <button type="submit">Actualizar Producto</button>
+          </form>
+      </body>
+      </html>
+      `;
+
+      res.send(htmlForm);
+    } catch (error) {
+      res.status(500).send('Error al cargar el producto: ' + error.message);
+    }
+  },
+
+     // Actualizar el producto
+  updateProduct: async (req, res) => {
+    try {
+      const productId = req.params.productId;
+      const updatedProduct = await Product.findByIdAndUpdate(productId, req.body, { new: true });
+
+      if (!updatedProduct) {
+        return res.status(404).send('Producto no encontrado');
+      }
+
+      // Redirigir al dashboard después de actualizar el producto
+      res.redirect('/dashboard');
+    } catch (error) {
+      res.status(500).send('Error al actualizar el producto: ' + error.message);
+    }
+  }
 }
-}
+
+
 
 
 module.exports = ProductController;

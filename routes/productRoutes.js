@@ -9,8 +9,7 @@ const upload = multer({ dest: 'public/images' });
 
 // Ruta para mostrar el formulario
 router.get('/dashboard/new', ProductController.getCreateProductFormView);
-//RUTA GEt para acceder a create si estas en el dashboard????igal a la get dashboard/new
-//router.get('/dashboard/create', ProductController.getCreateProductFormView);
+
 
 // Ruta para manejar la creación del producto (usa multer para manejar la subida de archivos)
 router.post('/dashboard', upload.single('imagen'), ProductController.create);
@@ -28,18 +27,12 @@ router.post('/dashboard/:productId/delete', ProductController.deleteProduct);
 router.get('/dashboard', ProductController.showDashboard); // Ruta para el dashboard
 
 
-
-/////////probar o se borra//////////
-
-// Ruta para el dashboard
-//router.get('/dashboard', ProductController.showDashboard); // Asegúrate de que esta línea esté en el archivo correcto
-
-// Otras rutas de productos
-//router.get('/', ProductController.showProducts); // Ruta para mostrar todos los productos
+// Ruta para obtener el formulario de editar producto
+router.get('/dashboard/:productId/edit', ProductController.showEditProduct);
 
 
-
-
+// Ruta para actualizar un producto
+router.put('/dashboard/:productId', ProductController.updateProduct);
 
 
 
