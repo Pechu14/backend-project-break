@@ -159,8 +159,200 @@ const ProductController = {
           error: error.message
         });
     }
+  },
+  // Método para mostrar todos los productos
+  showProducts: async (req, res) => {
+    try {
+      // Buscar todos los productos en la base de datos
+      const products = await Product.find();
+
+      // Crear la barra de navegación con categorías
+      const navBar = `
+        <nav>
+          <ul>
+            <li><a href="/products?category=Camisetas">Camisetas</a></li>
+            <li><a href="/products?category=Pantalones">Pantalones</a></li>
+            <li><a href="/products?category=Zapatos">Zapatos</a></li>
+            <li><a href="/products?category=Accesorios">Accesorios</a></li>
+            ${req.url === '/dashboard' ? '<li><a href="/dashboard/create">Subir Producto</a></li>' : ''}
+          </ul>
+        </nav>
+      `;
+
+      // Crear la vista HTML de todos los productos con enlaces a sus detalles
+      let html = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Listado de Productos</title>
+          <style>
+            nav ul {
+              list-style-type: none;
+              padding: 0;
+              display: flex;
+              gap: 15px;
+            }
+            nav ul li {
+              display: inline;
+            }
+            nav ul li a {
+              text-decoration: none;
+              color: blue;
+              font-weight: bold;
+            }
+            .product-list {
+              display: flex;
+              flex-wrap: wrap;
+            }
+            .product-item {
+              margin: 10px;
+              border: 1px solid #ccc;
+              padding: 10px;
+              width: 200px;
+            }
+            .product-item img {
+              max-width: 100%;
+            }
+          </style>
+        </head>
+        <body>
+          ${navBar} <!-- Insertar la barra de navegación -->
+
+          <h1>Productos Disponibles</h1>
+          <div class="product-list">
+      `;
+
+      // Iterar sobre los productos y crear una tarjeta para cada uno con enlace a su detalle
+      products.forEach(product => {
+        html += `
+          <div class="product-item">
+            <h2>${product.nombre}</h2>
+            <p>${product.descripcion}</p>
+            <p>Precio: ${product.precio}€</p>
+            <a href="/products/${product._id}">Ver detalle</a>
+          </div>
+        `;
+      });
+
+      // Cerrar la estructura HTML
+      html += `
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Enviar la vista HTML como respuesta
+      res.send(html);
+    } catch (error) {
+      res.status(500).send('Error al cargar los productos: ' + error.message);
+    }
+  
+  },
+
+   // Método para mostrar el detalle de un producto por ID
+   showProductById: async (req, res) => {
+    try {
+      const product = await Product.findById(req.params.id);
+
+      if (!product) {
+        return res.status(404).send('Producto no encontrado');
+      }
+
+      // Crear la vista HTML con el detalle del producto
+      const html = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Detalle del Producto</title>
+        </head>
+        <body>
+          <h1>${product.nombre}</h1>
+          <img src="/images/${product.imagen}" alt="${product.nombre}">
+          <p>${product.descripcion}</p>
+          <p>Precio: ${product.precio}€</p>
+          <a href="/products">Volver al listado</a>
+        </body>
+        </html>
+      `;
+
+      res.send(html);
+    } catch (error) {
+      res.status(500).send('Error al cargar el producto: ' + error.message);
+    }
+  },
+
+  // Método para eliminar un producto
+  deleteProduct: async (req, res) => {
+    try {
+      const { productId } = req.params;
+
+      // Buscar y eliminar el producto por su ID
+      await Product.findByIdAndDelete(productId);
+
+      // Redirigir al dashboard después de eliminar el producto
+      res.redirect('/dashboard');
+    } catch (error) {
+      console.error('Error eliminando el producto:', error);
+      res.status(500).send('Error al eliminar el producto');
+    }
+  },
+
+  // Controlador para mostrar el dashboard con la lista de productos
+showDashboard: async (req, res) => {
+  try {
+      const products = await Product.find();
+      let productCards = '<div class="product-list">';
+
+      // Generar las tarjetas de productos con el formulario de eliminar
+      products.forEach(product => {
+          productCards += `
+              <div class="product-card">
+                  <img src="/images/${product.imagen}" alt="${product.nombre}">
+                  <h2>${product.nombre}</h2>
+                  <p>${product.descripcion}</p>
+                  <p>${product.precio}€</p>
+                  <a href="/dashboard/${product._id}/edit">Editar</a>
+
+                  <!-- Formulario para eliminar el producto -->
+                  <form action="/dashboard/${product._id}/delete" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit">Eliminar Producto</button>
+                  </form>
+              </div>
+          `;
+      });
+
+      productCards += '</div>';
+
+      const html = `
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Dashboard - Productos</title>
+          </head>
+          <body>
+              <h1>Dashboard de Productos</h1>
+              <nav>
+                  <a href="/dashboard/new">Subir Producto</a>
+              </nav>
+              ${productCards}
+          </body>
+          </html>
+      `;
+      res.send(html);
+  } catch (error) {
+      res.status(500).send('Error al cargar el dashboard');
   }
-};
+
+}
+}
+
 
 module.exports = ProductController;
 

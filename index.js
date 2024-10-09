@@ -9,6 +9,12 @@ const app = express();
 dotenv.config();
 const PORT = process.env.PORT || 3000;
 
+
+const methodOverride = require('method-override');
+
+// Configuración del middleware
+app.use(methodOverride('_method'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('/public/images'));///comprobar que la ruta esta correcta
