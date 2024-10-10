@@ -170,10 +170,11 @@ const ProductController = {
       const navBar = `
         <nav>
           <ul>
-            <li><a href="/products?category=Camisetas">Camisetas</a></li>
-            <li><a href="/products?category=Pantalones">Pantalones</a></li>
-            <li><a href="/products?category=Zapatos">Zapatos</a></li>
-            <li><a href="/products?category=Accesorios">Accesorios</a></li>
+            <li><a href="/products/categoria/Camisetas">Camisetas</a></li>
+            <li><a href="/products/categoria/Pantalones">Pantalones</a></li>
+            <li><a href="/products/categoria/Zapatos">Zapatos</a></li>
+            <li><a href="/products/categoria/Accesorios">Accesorios</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
             ${req.url === '/dashboard' ? '<li><a href="/dashboard/create">Subir Producto</a></li>' : ''}
           </ul>
         </nav>
@@ -316,12 +317,6 @@ showDashboard: async (req, res) => {
                   <p>${product.descripcion}</p>
                   <p>${product.precio}€</p>
                   <a href="/dashboard/${product._id}/edit">Editar</a>
-
-                  <!-- Formulario para eliminar el producto -->
-                  <form action="/dashboard/${product._id}/delete" method="POST">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit">Eliminar Producto</button>
-                  </form>
               </div>
           `;
       });
@@ -411,6 +406,14 @@ showDashboard: async (req, res) => {
             <!-- Botón de enviar -->
             <button type="submit">Actualizar Producto</button>
           </form>
+
+            <!-- Formulario para eliminar el producto -->
+                  <form action="/dashboard/${product._id}/delete" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit">Eliminar Producto</button>
+                  </form>
+          
+          <a href="/products">Volver al listado</a>
       </body>
       </html>
       `;
@@ -436,8 +439,59 @@ showDashboard: async (req, res) => {
     } catch (error) {
       res.status(500).send('Error al actualizar el producto: ' + error.message);
     }
+  },
+
+  
+    // Controlador para mostrar productos por categoría
+    showProductsByCategory: async (req, res) => {
+      const { category } = req.params; // Obtener la categoría desde la URL
+  
+      try {
+        // Buscar los productos que coincidan con la categoría
+        const products = await Product.find({ categoria: category });
+  
+        // Generar el HTML directamente en el controlador
+        let htmlContent = `
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Productos en la categoría ${category}</title>
+          </head>
+          <body>
+            <h1>Productos en la categoría: ${category}</h1>
+            <ul>`;
+  
+        // Iterar sobre los productos para añadirlos al HTML
+        products.forEach(product => {
+          htmlContent += `
+            <li>
+              <h2>${product.nombre}</h2>
+              <p>${product.descripcion}</p>
+              <p>Precio: $${product.precio.toFixed(2)}</p>
+              <a href="/products/${product._id}">Ver detalles</a>
+            </li>
+          `;
+        });
+  
+        // Cerrar la lista y añadir enlace para volver
+        htmlContent += `
+            </ul>
+            <a href="/products">Volver a todas las categorías</a>
+          </body>
+          </html>
+        `;
+  
+        // Enviar el HTML generado como respuesta
+        res.send(htmlContent);
+      } catch (error) {
+        // En caso de error, responder con un mensaje de error
+        res.status(500).json({ message: 'Error al cargar los productos por categoría', error: error.message });
+      }
+    }
   }
-}
+
 
 
 

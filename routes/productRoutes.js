@@ -34,6 +34,9 @@ router.get('/dashboard/:productId/edit', ProductController.showEditProduct);
 // Ruta para actualizar un producto
 router.put('/dashboard/:productId', ProductController.updateProduct);
 
+// Ruta para mostrar productos por categoría
+router.get('/products/categoria/:category', ProductController.showProductsByCategory);
+
 
 
 
