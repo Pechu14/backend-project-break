@@ -2,6 +2,8 @@
 const express = require("express");
 const dotenv = require('dotenv');
 const router = require('./routes/productRoutes')
+const path = require('path');
+
 
 const { dbConnection } = require('./config/db');
 
@@ -18,7 +20,7 @@ app.use(methodOverride('_method'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('/public/images'));///comprobar que la ruta esta correcta
+app.use('/public', express.static(path.join(__dirname, 'public')));///comprobar que la ruta esta correcta
 
 
 dbConnection()
