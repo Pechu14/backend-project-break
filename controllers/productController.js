@@ -37,7 +37,7 @@ const ProductController = {
   },
 
   // Para crear el producto con POST
-  createproduct: async (req, res) => {
+  createProduct: async (req, res) => {
     try {
       const { nombre, descripcion, categoria, talla, precio, imagen } = req.body;
      
