@@ -1,6 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const Product = require('../models/Product'); // Asegúrate de que el modelo está importado
+require('dotenv').config(); // Carga las variables de entorno desde .env
 
 
 //Para los html
@@ -65,6 +66,7 @@ const ProductController = {
   },
   // Método para mostrar todos los productos
   showProducts: async (req, res) => {
+    const { HOST, PORT } = process.env;
     try {
       // Buscar todos los productos en la base de datos
       const products = await Product.find();
@@ -73,7 +75,7 @@ const ProductController = {
       products.forEach(product => {
         htmlShowProducts += `
           <div class="product-item">
-            <img src="http://localhost:8080/public/images/${product.imagen}" alt="${product.nombre}">
+            <img src="http://${HOST}:${PORT}/public/images/${product.imagen}" alt="${product.nombre}">
             <h2>${product.nombre}</h2>
             <p>${product.descripcion}</p>
             <p>Precio: ${product.precio}€</p>
@@ -132,6 +134,7 @@ const ProductController = {
 
   // Controlador para mostrar el dashboard con la lista de productos
 showDashboard: async (req, res) => {
+  const { HOST, PORT } = process.env;
   try {
       const products = await Product.find();
       let productCards = '<div class="product-list">';
@@ -140,7 +143,7 @@ showDashboard: async (req, res) => {
       products.forEach(product => {
           productCards += `
               <div class="product-card">
-                  <img src="http://localhost:8080/public/images/${product.imagen}" alt="${product.nombre}">
+                  <img src="http://${HOST}:${PORT}/public/images/${product.imagen}" alt="${product.nombre}">
                   <h2>${product.nombre}</h2>
                   <p>${product.descripcion}</p>
                   <p>${product.precio}€</p>
@@ -198,6 +201,7 @@ showDashboard: async (req, res) => {
   
     // Controlador para mostrar productos por categoría
     showProductsByCategory: async (req, res) => {
+      const { HOST, PORT } = process.env;
       const { category } = req.params; // Obtener la categoría desde la URL
   
       try {
@@ -211,7 +215,7 @@ showDashboard: async (req, res) => {
         products.forEach(product => {
           htmlContent += `
             <li>
-              <img src="http://localhost:8080/public/images/${product.imagen}" alt="${product.nombre}">
+              <img src="http://${HOST}:${PORT}/public/images/${product.imagen}" alt="${product.nombre}">
               <h2>${product.nombre}</h2>
               <p>${product.descripcion}</p>
               <p>Precio: $${product.precio.toFixed(2)}</p>

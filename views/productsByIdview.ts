@@ -1,4 +1,7 @@
+require('dotenv').config(); // Carga las variables de entorno desde .env
+
 const htmlById = (product) => { 
+  const { HOST, PORT } = process.env;
     return `
         <!DOCTYPE html>
         <html lang="es">
@@ -10,7 +13,7 @@ const htmlById = (product) => {
         </head>
         <body>
           <h1>${product.nombre}</h1>
-          <img src="http://localhost:8080/public/images/${product.imagen}" alt="${product.nombre}">
+          <img src="http://${HOST}:${PORT}/public/images/${product.imagen}" alt="${product.nombre}">
           <p>${product.descripcion}</p>
           <p>Precio: ${product.precio}€</p>
           <p>ID: ${product._id}</p>
