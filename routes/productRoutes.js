@@ -8,11 +8,11 @@ const multer = require('multer');
 const upload = multer({ dest: 'public/images' });
 
 // Ruta para mostrar el formulario
-router.get('/dashboard/new', ProductController.getCreateProductFormView);
+router.get('/dashboard/new', ProductController.showNewProduct);
 
 
 // Ruta para manejar la creación del producto (usa multer para manejar la subida de archivos)
-router.post('/dashboard', upload.single('imagen'), ProductController.create);
+router.post('/dashboard', upload.single('imagen'), ProductController.createproduct);
 
 // Ruta GET para mostrar todos los productos
 router.get('/products', ProductController.showProducts);

@@ -30,14 +30,14 @@ const upload = multer({ storage });
 
 const ProductController = {
   // Para traer el formulario, recoger los datos y crear el producto
-  getCreateProductFormView: async (req, res) => {
+  showNewProduct: async (req, res) => {
     const htmlForm = createProductFormView;
     
     res.send(htmlForm);
   },
 
   // Para crear el producto con POST
-  create: async (req, res) => {
+  createproduct: async (req, res) => {
     try {
       const { nombre, descripcion, categoria, talla, precio, imagen } = req.body;
      
