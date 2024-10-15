@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Crear un producto nuevo</title>
+        <link rel="stylesheet" href="/public/styles.css">
       </head>
       <body>
           <form id="productForm" onsubmit="submitForm(event)">
@@ -71,7 +72,6 @@
               if (imagenInput.files && imagenInput.files[0]) {
                 imagen = imagenInput.files[0].name; // Solo se permite seleccionar un archivo
               }
-              console.log("Este es el nombre de la imagen: " + imagen)
 
               // Crear el objeto del producto
               const data = {
@@ -83,7 +83,6 @@
                 imagen: imagen
               }
                 
-              console.log("El data mandado es: " + data)
               // Hacer la petición HTTP con fetch
               fetch('/dashboard', {
                 method: 'POST',

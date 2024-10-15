@@ -1,8 +1,18 @@
 const multer = require('multer');
 const path = require('path');
 const Product = require('../models/Product'); // Asegúrate de que el modelo está importado
+
+
+//Para los html
 const createProductFormView = require('../views/createProductFormView.ts');
 const productsListView = require('../views/productsListView.ts');
+const editProductView = require('../views/editProductView.ts');
+const htmlById = require('../views/productsByIdview.ts');
+const htmlDashboard = require('../views/showDashboardView.ts');
+const htmlCategory = require('../views/productsByCategory.ts');
+
+
+
 
 // Configuración de multer para el manejo de archivos (imágenes)
 const storage = multer.diskStorage({
@@ -14,6 +24,8 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage });
+
+
 
 const ProductController = {
   // Para traer el formulario, recoger los datos y crear el producto
@@ -46,7 +58,7 @@ const ProductController = {
       res
         .status(500)
         .json({
-          message: 'There was a problem trying to create a product',
+          message: 'Problema al crear el producto',
           error: error.message
         });
     }
@@ -95,25 +107,7 @@ const ProductController = {
       }
 
       // Crear la vista HTML con el detalle del producto
-      const html = `
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Detalle del Producto</title>
-        </head>
-        <body>
-          <h1>${product.nombre}</h1>
-          <img src="http://localhost:8080/public/images/${product.imagen}" alt="${product.nombre}">
-          <p>${product.descripcion}</p>
-          <p>Precio: ${product.precio}€</p>
-          <p>ID: ${product._id}</p>
-          <a href="/products">Volver al listado</a>
-        </body>
-        </html>
-      `;
-
+      const html = htmlById(product)
       res.send(html);
     } catch (error) {
       res.status(500).send('Error al cargar el producto: ' + error.message);
@@ -158,28 +152,7 @@ showDashboard: async (req, res) => {
 
       productCards += '</div>';
 
-      const html = `
-          <!DOCTYPE html>
-          <html lang="es">
-          <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Dashboard - Productos</title>
-          </head>
-          <body>
-              <h1>Dashboard de Productos</h1>
-              <nav>
-                <a href="/products/categoria/Camisetas">Camisetas</a>
-                <a href="/products/categoria/Pantalones">Pantalones</a>
-                <a href="/products/categoria/Zapatos">Zapatos</a>
-                <a href="/products/categoria/Accesorios">Accesorios</a>
-                <a href="/dashboard">Dashboard</a></li>
-                <a href="/dashboard/new">Subir Producto</a>
-              </nav>
-              ${productCards}
-          </body>
-          </html>
-      `;
+      const html = htmlDashboard(productCards) ;
       res.send(html);
   } catch (error) {
       res.status(500).send('Error al cargar el dashboard');
@@ -197,66 +170,7 @@ showDashboard: async (req, res) => {
         return res.status(404).send('Producto no encontrado');
       }
 
-      const htmlForm = `
-      <!DOCTYPE html>
-      <html lang="es">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Editar Producto</title>
-      </head>
-      <body>
-          <form action="/dashboard/${product._id}?_method=PUT" method="POST">
-            <!-- Nombre del Producto -->
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" value="${product.nombre}" maxlength="100" required>
-            <br><br>
-
-            <!-- Descripción del Producto -->
-            <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion" maxlength="300" required>${product.descripcion}</textarea>
-            <br><br>
-
-            <!-- Categoría del Producto -->
-            <label for="categoria">Categoría:</label>
-            <select id="categoria" name="categoria" required>
-              <option value="Camisetas" ${product.categoria === "Camisetas" ? "selected" : ""}>Camisetas</option>
-              <option value="Pantalones" ${product.categoria === "Pantalones" ? "selected" : ""}>Pantalones</option>
-              <option value="Zapatos" ${product.categoria === "Zapatos" ? "selected" : ""}>Zapatos</option>
-              <option value="Accesorios" ${product.categoria === "Accesorios" ? "selected" : ""}>Accesorios</option>
-            </select>
-            <br><br>
-
-            <!-- Talla del Producto -->
-            <label for="talla">Talla:</label>
-            <select id="talla" name="talla" required>
-              <option value="XS" ${product.talla === "XS" ? "selected" : ""}>XS</option>
-              <option value="S" ${product.talla === "S" ? "selected" : ""}>S</option>
-              <option value="M" ${product.talla === "M" ? "selected" : ""}>M</option>
-              <option value="L" ${product.talla === "L" ? "selected" : ""}>L</option>
-              <option value="XL" ${product.talla === "XL" ? "selected" : ""}>XL</option>
-            </select>
-            <br><br>
-
-            <!-- Precio del Producto -->
-            <label for="precio">Precio:</label>
-            <input type="number" id="precio" name="precio" value="${product.precio}" step="0.01" min="0" required>
-            <br><br>
-
-            <!-- Botón de enviar -->
-            <button type="submit">Actualizar Producto</button>
-          </form>
-
-            <!-- Formulario para eliminar el producto -->
-                  <form action="/dashboard/${product._id}/delete" method="POST">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit">Eliminar Producto</button>
-                  </form>
-          
-          <a href="/dashboard">Volver al dashboard</a>
-      </body>
-      </html>
-      `;
+      const htmlForm = editProductView(product);
 
       res.send(htmlForm);
     } catch (error) {
@@ -291,26 +205,7 @@ showDashboard: async (req, res) => {
         const products = await Product.find({ categoria: category });
   
         // Generar el HTML directamente en el controlador
-        let htmlContent = `
-          <!DOCTYPE html>
-          <html lang="es">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Productos en la categoría ${category}</title>
-          </head>
-          <body>
-            <nav>
-              <a href="/products">Volver a /products</a>
-              <a href="/products/categoria/Camisetas">Camisetas</a>
-              <a href="/products/categoria/Pantalones">Pantalones</a>
-              <a href="/products/categoria/Zapatos">Zapatos</a>
-              <a href="/products/categoria/Accesorios">Accesorios</a>
-              <a href="/dashboard">Dashboard</a></li>
-              <a href="/dashboard/new">Subir Producto</a>
-            </nav>
-            <h1>Productos en la categoría: ${category}</h1>
-            <ul>`;
+        let htmlContent = htmlCategory(category);
   
         // Iterar sobre los productos para añadirlos al HTML
         products.forEach(product => {
@@ -328,7 +223,6 @@ showDashboard: async (req, res) => {
         // Cerrar la lista y añadir enlace para volver
         htmlContent += `
             </ul>
-
           </body>
           </html>
         `;

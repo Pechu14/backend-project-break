@@ -5,35 +5,7 @@ let productsListView = `
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Listado de Productos</title>
-          <style>
-            nav ul {
-              list-style-type: none;
-              padding: 0;
-              display: flex;
-              gap: 15px;
-            }
-            nav ul li {
-              display: inline;
-            }
-            nav ul li a {
-              text-decoration: none;
-              color: blue;
-              font-weight: bold;
-            }
-            .product-list {
-              display: flex;
-              flex-wrap: wrap;
-            }
-            .product-item {
-              margin: 10px;
-              border: 1px solid #ccc;
-              padding: 10px;
-              width: 200px;
-            }
-            .product-item img {
-              max-width: 100%;
-            }
-          </style>
+          <link rel="stylesheet" href="/public/styles.css">
         </head>
         <body>
           <nav>
@@ -46,7 +18,7 @@ let productsListView = `
             </ul>
         </nav>
         
-          <h1>Productos Disponibles</h1>
+          <h1>Productos de nuestra tienda</h1>
           <div class="product-list">
       `;
 
