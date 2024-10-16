@@ -1,4 +1,4 @@
-require('dotenv').config(); // Carga las variables de entorno desde .env
+require('dotenv').config();
 
 const htmlById = (product) => { 
   const { HOST, PORT } = process.env;
@@ -17,7 +17,7 @@ const htmlById = (product) => {
           <p>${product.descripcion}</p>
           <p>Precio: ${product.precio}€</p>
           <p>ID: ${product._id}</p>
-          <a href="/products">Volver al listado</a>
+          <a href="/products">Volver a products</a>
         </body>
         </html>
       `;

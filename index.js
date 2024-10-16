@@ -10,21 +10,24 @@ const app = express();
 dotenv.config();
 const PORT = process.env.PORT || 3000;
 
-//  OJO para React, configura CORS para permitir solicitudes del frontend
+const swaggerUI = require('swagger-ui-express');
+const docs = require('./docs/index');
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(docs));
+
+
+// para React, configura CORS para permitir solicitudes del frontend
 //const cors = require('cors');
 //app.use(cors({ origin: `http://${HOST}:${PORT}` }));
 
 
-// Configuración del middleware
 app.use(methodOverride('_method'));
 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/public', express.static(path.join(__dirname, 'public')));///comprobar que la ruta esta correcta
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 
-// Uso de las rutas de la API de productos
 app.use(productAPIRoutes);
 
 

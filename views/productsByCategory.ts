@@ -10,7 +10,7 @@ const htmlCategory = (category) =>{
           </head>
           <body>
             <nav>
-              <a href="/products">Volver a /products</a>
+              <a href="/products">Volver a products</a>
               <a href="/products/categoria/Camisetas">Camisetas</a>
               <a href="/products/categoria/Pantalones">Pantalones</a>
               <a href="/products/categoria/Zapatos">Zapatos</a>

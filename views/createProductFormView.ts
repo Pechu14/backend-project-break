@@ -58,8 +58,9 @@
           <!-- JavaScript embebido para manejar la solicitud del formulario -->
           <script>
             function submitForm(event) {
-              event.preventDefault(); // Evitar el envío tradicional del formulario
-              // Obtener los valores de los inputs
+             // Evitamos el envío tradicional del formulario
+              event.preventDefault();
+              // Obtenemos los valores de los inputs
               const nuevonombre = document.getElementById('nombre').value;
               const nuevadescripcion = document.getElementById('descripcion').value;
               const nuevacategoria = document.getElementById('categoria').value;
@@ -70,7 +71,7 @@
               const imagenInput = document.getElementById('imagen');
               let imagen = undefined;
               if (imagenInput.files && imagenInput.files[0]) {
-                imagen = imagenInput.files[0].name; // Solo se permite seleccionar un archivo
+                imagen = imagenInput.files[0].name;
               }
 
               // Crear el objeto del producto
@@ -83,19 +84,21 @@
                 imagen: imagen
               }
                 
-              // Hacer la petición HTTP con fetch
+              // Hacemos la petición HTTP con fetch
               fetch('/dashboard', {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/json', // Tipo de contenido enviado
+                 // Tipo de contenido enviado
+                  'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data), // Enviamos el FormData que contiene los datos y la imagen
+                 // Enviamos el FormData que contiene los datos y la imagen
+                body: JSON.stringify(data),
               })
               .then(response => {
                 if (!response.ok) {
                   throw new Error('Error en la solicitud');
                 }
-                return response.json(); // O puedes redirigir o hacer otra cosa con la respuesta
+                return response.json();
               })
               .then(data => {
                 console.log('Producto creado:', data);
