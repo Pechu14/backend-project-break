@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const htmlById = (product) => { 
-  const { HOST, PORT } = process.env;
+  const { HOST } = process.env;
     return `
         <!DOCTYPE html>
         <html lang="es">
@@ -13,7 +13,7 @@ const htmlById = (product) => {
         </head>
         <body>
           <h1>${product.nombre}</h1>
-          <img src="http://${HOST}:${PORT}/public/images/${product.imagen}" alt="${product.nombre}">
+          <img src="http://${HOST}/public/images/${product.imagen}" alt="${product.nombre}">
           <p>${product.descripcion}</p>
           <p>Precio: ${product.precio}€</p>
           <p>ID: ${product._id}</p>
@@ -23,5 +23,5 @@ const htmlById = (product) => {
       `;
 }
 
-module.exports = htmlById
+module.exports = htmlById;
 

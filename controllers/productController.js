@@ -65,15 +65,16 @@ const ProductController = {
   },
   
   showProducts: async (req, res) => {
-    const { HOST, PORT } = process.env;
+    
     try {
+      const { HOST } = process.env;
       const products = await Product.find();
       let htmlShowProducts = productsListView;
       
       products.forEach(product => {
         htmlShowProducts += `
           <div class="product-item">
-            <img src="http://${HOST}:${PORT}/public/images/${product.imagen}" alt="${product.nombre}">
+            <img src="http://${HOST}/public/images/${product.imagen}" alt="${product.nombre}">
             <h2>${product.nombre}</h2>
             <p>${product.descripcion}</p>
             <p>Precio: ${product.precio}€</p>
@@ -125,15 +126,16 @@ const ProductController = {
 
 
 showDashboard: async (req, res) => {
-  const { HOST, PORT } = process.env;
+  
   try {
+    const { HOST } = process.env;
       const products = await Product.find();
       let productCards = '<div class="product-list">';
 
       products.forEach(product => {
           productCards += `
               <div class="product-card">
-                  <img src="http://${HOST}:${PORT}/public/images/${product.imagen}" alt="${product.nombre}">
+                  <img src="http://${HOST}/public/images/${product.imagen}" alt="${product.nombre}">
                   <h2>${product.nombre}</h2>
                   <p>${product.descripcion}</p>
                   <p>${product.precio}€</p>
@@ -189,10 +191,11 @@ showDashboard: async (req, res) => {
 
   
   showProductsByCategory: async (req, res) => {
-      const { HOST, PORT } = process.env;
+      
       const { category } = req.params;
   
       try {
+        const { HOST } = process.env;
         const products = await Product.find({ categoria: category });
   
         let htmlContent = htmlCategory(category);
@@ -200,7 +203,7 @@ showDashboard: async (req, res) => {
         products.forEach(product => {
           htmlContent += `
             <li>
-              <img src="http://${HOST}:${PORT}/public/images/${product.imagen}" alt="${product.nombre}">
+              <img src="http://${HOST}/public/images/${product.imagen}" alt="${product.nombre}">
               <h2>${product.nombre}</h2>
               <p>${product.descripcion}</p>
               <p>Precio: $${product.precio.toFixed(2)}</p>
